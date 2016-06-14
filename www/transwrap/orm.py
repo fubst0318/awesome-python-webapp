@@ -34,7 +34,7 @@ class Field(object):
 	def __str__(self):
 		s = ['<%s:%s,%s,default(%s),' %(self.__class__.__name__,self.name,self.dll,self._default)]
 		self.nullable and s.append('N')
-		self.updateable and s.append('U')
+		self.updatable and s.append('U')
 		self.insertable and s.append('I')
 		s.append('>')
 		return ''.join(s)
@@ -116,13 +116,13 @@ def _gen_sql(table_name,mappings):
 	return '\n'.join(sql)
 
 class ModelMetaclass(type):
-	'''
-	Metaclass for model objects.
-	'''
-	def __new__(cls,name,bases,attrs):
+    '''
+    Metaclass for model objects.
+    '''
+    def __new__(cls, name, bases, attrs):
 		#skip base Model class:
 		if name =='Model':
-			return type.__new__(cls,name,bases.attrs)
+			return type.__new__(cls,name,bases,attrs)
 
 		# store all subclasses info:
 		if not hasattr(cls,'subclasses'):
@@ -168,7 +168,7 @@ class ModelMetaclass(type):
 		return type.__new__(cls,name,bases,attrs)
 		
 class Model(dict):
-	'''
+    '''
     Base class for ORM.
 
     >>> class User(Model):
@@ -297,7 +297,7 @@ class Model(dict):
     	self.pre_delete and self.pre_delete()
     	pk = self.__primary_key__.name
     	args = (getattr(self,pk),)
-    	db.update('detele from `%s` where `%s`=?' % (self.__table__,pk),*args)
+    	db.update('delete from `%s` where `%s`=?' % (self.__table__,pk),*args)
     	return self
 
     def insert(self):
@@ -311,7 +311,7 @@ class Model(dict):
     	db.insert('%s' % self.__table__,**params)
     	return self
 
-if __name__='__main__':
+if __name__=='__main__':
 	logging.basicConfig(level=logging.DEBUG)
 	db.create_engine('www-data','www-data','test')
 	db.update('drop table if exists user')

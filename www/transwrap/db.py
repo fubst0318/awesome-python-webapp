@@ -13,44 +13,46 @@ import time,uuid,functools,threading,logging
 #Dict object:
 
 class Dict(dict):
-	'''
-    Simple dict but support access as x.y style.
+	# '''
+ #    Simple dict but support access as x.y style.
 
-    >>> d1 = Dict()
-    >>> d1['x'] = 100
-    >>> d1.x
-    100
-    >>> d1.y = 200
-    >>> d1['y']
-    200
-    >>> d2 = Dict(a=1, b=2, c='3')
-    >>> d2.c
-    '3'
-    >>> d2['empty']
-    Traceback (most recent call last):
-        ...
-    KeyError: 'empty'
-    >>> d2.empty
-    Traceback (most recent call last):
-        ...
-    AttributeError: 'Dict' object has no attribute 'empty'
-    >>> d3 = Dict(('a', 'b', 'c'), (1, 2, 3))
-    >>> d3.a
-    1
-    >>> d3.b
-    2
-    >>> d3.c
-    3
-    '''
-    def __init__(self,names=(),values=(),**kw):
-    	super(Dict,self).__init__(**kw)
-    	for k,v in zip(names,values):
-    		self[k]=v
+ #    >>> d1 = Dict()
+ #    >>> d1['x'] = 100
+ #    >>> d1.x
+ #    100
+ #    >>> d1.y = 200
+ #    >>> d1['y']
+ #    200
+ #    >>> d2 = Dict(a=1, b=2, c='3')
+ #    >>> d2.c
+ #    '3'
+ #    >>> d2['empty']
+ #    Traceback (most recent call last):
+ #        ...
+ #    KeyError: 'empty'
+ #    >>> d2.empty
+ #    Traceback (most recent call last):
+ #        ...
+ #    AttributeError: 'Dict' object has no attribute 'empty'
+ #    >>> d3 = Dict(('a', 'b', 'c'), (1, 2, 3))
+ #    >>> d3.a
+ #    1
+ #    >>> d3.b
+ #    2
+ #    >>> d3.c
+ #    3
+ #    '''
+    def __init__(self, names=(), values=(), **kw):
+        super(Dict, self).__init__(**kw)
+        for k, v in zip(names, values):
+            self[k] = v
+
     def __getattr__(self,key):
     	try:
     		return self[key]
     	except KeyError:
-    		raise AttributeError(r"'Dict' object has no attribute '%s'" % key)		
+    		raise AttributeError(r"'Dict' object has no attribute '%s'" % key)	
+
     def __setattr__(self,key,value):
     	self[key]=value		
 
@@ -149,12 +151,12 @@ def create_engine(user,password,database,host='127.0.0.1',port=3306,**kw):
 	if engine is not None:
 		raise DBError('Engie is already initialized.')
 	params = dict(user=user,password=password,database=database,host=host,port=port)
-	defaults = dict(use_unicode=True,charset='utf-8',collation='utf-8_general_ci',autocommit=False)
+	defaults = dict(use_unicode=True,charset='utf8',collation='utf8_general_ci',autocommit=False)
 	for k,v in defaults.iteritems():
 		params[k]=kw.pop(k,v)
 	params.update(kw)
 	params['buffered'] = True
-	engine = _Engine(lambda:mysql.connector.connect(**params))
+	engine = _Engine(lambda: mysql.connector.connect(**params))
 	# test connection...
 	logging.info('Init mysql engine <%s> ok.' % hex(id(engine)))		
 
@@ -359,29 +361,29 @@ def select_one(sql,*args):
 
 @with_connection
 def select_init(sql,**args):
-	'''
-    Execute select SQL and expected one int and only one int result. 
+	# '''
+ #    Execute select SQL and expected one int and only one int result. 
 
-    >>> n = update('delete from user')
-    >>> u1 = dict(id=96900, name='Ada', email='ada@test.org', passwd='A-12345', last_modified=time.time())
-    >>> u2 = dict(id=96901, name='Adam', email='adam@test.org', passwd='A-12345', last_modified=time.time())
-    >>> insert('user', **u1)
-    1
-    >>> insert('user', **u2)
-    1
-    >>> select_int('select count(*) from user')
-    2
-    >>> select_int('select count(*) from user where email=?', 'ada@test.org')
-    1
-    >>> select_int('select count(*) from user where email=?', 'notexist@test.org')
-    0
-    >>> select_int('select id from user where email=?', 'ada@test.org')
-    96900
-    >>> select_int('select id, name from user where email=?', 'ada@test.org')
-    Traceback (most recent call last):
-        ...
-    MultiColumnsError: Expect only one column.
-    '''
+ #    >>> n = update('delete from user')
+ #    >>> u1 = dict(id=96900, name='Ada', email='ada@test.org', passwd='A-12345', last_modified=time.time())
+ #    >>> u2 = dict(id=96901, name='Adam', email='adam@test.org', passwd='A-12345', last_modified=time.time())
+ #    >>> insert('user', **u1)
+ #    1
+ #    >>> insert('user', **u2)
+ #    1
+ #    >>> select_int('select count(*) from user')
+ #    2
+ #    >>> select_int('select count(*) from user where email=?', 'ada@test.org')
+ #    1
+ #    >>> select_int('select count(*) from user where email=?', 'notexist@test.org')
+ #    0
+ #    >>> select_int('select id from user where email=?', 'ada@test.org')
+ #    96900
+ #    >>> select_int('select id, name from user where email=?', 'ada@test.org')
+ #    Traceback (most recent call last):
+ #        ...
+ #    MultiColumnsError: Expect only one column.
+ #    '''
     d = _select(sql,True,*args)
     if len(d) !=1:
     	raise MultiColumnsError('Except only one column.')
@@ -389,27 +391,27 @@ def select_init(sql,**args):
 
 @with_connection
 def select(sql,*args):
-	'''
-    Execute select SQL and return list or empty list if no result.
+	# '''
+ #    Execute select SQL and return list or empty list if no result.
 
-    >>> u1 = dict(id=200, name='Wall.E', email='wall.e@test.org', passwd='back-to-earth', last_modified=time.time())
-    >>> u2 = dict(id=201, name='Eva', email='eva@test.org', passwd='back-to-earth', last_modified=time.time())
-    >>> insert('user', **u1)
-    1
-    >>> insert('user', **u2)
-    1
-    >>> L = select('select * from user where id=?', 900900900)
-    >>> L
-    []
-    >>> L = select('select * from user where id=?', 200)
-    >>> L[0].email
-    u'wall.e@test.org'
-    >>> L = select('select * from user where passwd=? order by id desc', 'back-to-earth')
-    >>> L[0].name
-    u'Eva'
-    >>> L[1].name
-    u'Wall.E'
-    ''' 
+ #    >>> u1 = dict(id=200, name='Wall.E', email='wall.e@test.org', passwd='back-to-earth', last_modified=time.time())
+ #    >>> u2 = dict(id=201, name='Eva', email='eva@test.org', passwd='back-to-earth', last_modified=time.time())
+ #    >>> insert('user', **u1)
+ #    1
+ #    >>> insert('user', **u2)
+ #    1
+ #    >>> L = select('select * from user where id=?', 900900900)
+ #    >>> L
+ #    []
+ #    >>> L = select('select * from user where id=?', 200)
+ #    >>> L[0].email
+ #    u'wall.e@test.org'
+ #    >>> L = select('select * from user where passwd=? order by id desc', 'back-to-earth')
+ #    >>> L[0].name
+ #    u'Eva'
+ #    >>> L[1].name
+ #    u'Wall.E'
+ #    ''' 
     return _select(sql,False,*args)    
 
 @with_connection
@@ -432,20 +434,20 @@ def _update(sql,*args):
 			cursor.close()
 
 def insert(table,**kw):
-	'''
-    Execute insert SQL.
+	# '''
+ #    Execute insert SQL.
 
-    >>> u1 = dict(id=2000, name='Bob', email='bob@test.org', passwd='bobobob', last_modified=time.time())
-    >>> insert('user', **u1)
-    1
-    >>> u2 = select_one('select * from user where id=?', 2000)
-    >>> u2.name
-    u'Bob'
-    >>> insert('user', **u2)
-    Traceback (most recent call last):
-      ...
-    IntegrityError: 1062 (23000): Duplicate entry '2000' for key 'PRIMARY'
-    '''
+ #    >>> u1 = dict(id=2000, name='Bob', email='bob@test.org', passwd='bobobob', last_modified=time.time())
+ #    >>> insert('user', **u1)
+ #    1
+ #    >>> u2 = select_one('select * from user where id=?', 2000)
+ #    >>> u2.name
+ #    u'Bob'
+ #    >>> insert('user', **u2)
+ #    Traceback (most recent call last):
+ #      ...
+ #    IntegrityError: 1062 (23000): Duplicate entry '2000' for key 'PRIMARY'
+ #    '''
     cols,args = zip(*kw.iteritems())
     sql = 'insert into `%s` (%s) values (%s)' %(table,','.join(['`%s`' % col for col in cols]),','.join(['?' for i in range(len(cols))]))
     return _update(sql,*args)
@@ -474,10 +476,10 @@ def update(sql,*args):
     '''
     return _update(sql,*args)
 
-if __name__=='__main__':
-	logging.basicConfig(level=logging.DEBUG)
-	create_engine('www-data','www-data','test')
-	update('drop table if exists user')
-	update('create table user (id int primary key , name text, email text,password text,last_modified real)')
-	import doctest
-	doctest.testmod()
+# if __name__=='__main__':
+# 	logging.basicConfig(level=logging.DEBUG)
+# 	create_engine('www-data','www-data','test')
+# 	update('drop table if exists user')
+# 	update('create table user (id int primary key , name text, email text,password text,last_modified real)')
+# 	import doctest
+# 	doctest.testmod()
