@@ -1,25 +1,25 @@
-#web.py
-#!usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 '''
-A simple,lightweight,WSGI-compatible web framework.
+A simple, lightweight, WSGI-compatible web framework.
 '''
 
-__author__ ="Tony Xu"
+__author__ = 'Tony Xu'
 
-import types,os,re, cgi, sys, time, datetime, functools, mimetypes, threading, logging, urllib, traceback
+import types, os, re, cgi, sys, time, datetime, functools, mimetypes, threading, logging, urllib, traceback
 
 try:
-	from cStringIO import StringIO
+    from cStringIO import StringIO
 except ImportError:
-	from StringIO import StringIO
+    from StringIO import StringIO
 
 # thread local object for storing request and response:
 
 ctx = threading.local()
 
 # Dict object:
+
 class Dict(dict):
     '''
     Simple dict but support access as x.y style.
@@ -66,9 +66,9 @@ class Dict(dict):
 
 _TIMEDELTA_ZERO = datetime.timedelta(0)
 
-# timezone as UTC+8:00 , UTC-10:00
+# timezone as UTC+8:00, UTC-10:00
 
-_RE_TZ = re.compile('^(\+\-)([0-9]{1,2})\:([0-9]{1,2})$')
+_RE_TZ = re.compile('^([\+\-])([0-9]{1,2})\:([0-9]{1,2})$')
 
 class UTC(datetime.tzinfo):
     '''
@@ -97,7 +97,7 @@ class UTC(datetime.tzinfo):
     >>> d2.seconds
     28800
     '''
-    
+
     def __init__(self, utc):
         utc = str(utc.strip().upper())
         mt = _RE_TZ.match(utc)
@@ -134,7 +134,7 @@ _RESPONSE_STATUSES = {
     101: 'Switching Protocols',
     102: 'Processing',
 
-        # Successful
+    # Successful
     200: 'OK',
     201: 'Created',
     202: 'Accepted',
@@ -236,7 +236,7 @@ _RESPONSE_HEADERS = (
 
 _RESPONSE_HEADER_DICT = dict(zip(map(lambda x: x.upper(), _RESPONSE_HEADERS), _RESPONSE_HEADERS))
 
-_HEADER_X_POWERED_BY = ('X-Powered-By', 'transwrap/1.0')
+_HEADER_X_POWERED_BY = ('X-Powered-By', 'transwarp/1.0')
 
 class HttpError(Exception):
     '''
