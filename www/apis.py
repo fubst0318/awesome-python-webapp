@@ -74,7 +74,7 @@ def _dump(obj):
     raise TypeError('%s is not JSON serializable' %obj)
 
 def dumps(obj):
-    return json.dumps(obj)
+    return json.dumps(obj, default=_dump)
 
 class APIError(StandardError):
     '''

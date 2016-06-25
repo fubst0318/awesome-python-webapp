@@ -360,7 +360,7 @@ def select_one(sql,*args):
     return 	_select(sql,True,*args)
 
 @with_connection
-def select_init(sql,**args):
+def select_int(sql,**args):
 	# '''
  #    Execute select SQL and expected one int and only one int result. 
 
@@ -476,10 +476,10 @@ def update(sql,*args):
     '''
     return _update(sql,*args)
 
-# if __name__=='__main__':
-# 	logging.basicConfig(level=logging.DEBUG)
-# 	create_engine('www-data','www-data','test')
-# 	update('drop table if exists user')
-# 	update('create table user (id int primary key , name text, email text,password text,last_modified real)')
-# 	import doctest
-# 	doctest.testmod()
+if __name__=='__main__':
+	logging.basicConfig(level=logging.DEBUG)
+	create_engine('www-data','www-data','test')
+	update('drop table if exists user')
+	update('create table user (id int primary key , name text, email text,password text,last_modified real)')
+	import doctest
+	doctest.testmod()
